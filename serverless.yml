@@ -1,0 +1,49 @@
+service: serverless-page-to-pdf
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  region: >-
+    ${opt:region, self:provider.environment.DEFAULT_REGION}
+  stage: "${opt:stage, self:custom.defaults.stage}"
+  profile: "${self:custom.profiles.${self:provider.stage}}"
+  timeout: 30
+  tracing: true
+  environment:
+    DEFAULT_REGION: eu-central-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "xray:*"
+      Resource: "*"
+plugins:
+  - serverless-prune-plugin
+  - serverless-plugin-tracing
+  - serverless-offline
+custom:
+  defaults:
+    stage: local
+  profiles:
+    local: "${self:service}-local"
+    dev: "${self:service}-dev"
+    staging: "${self:service}-staging"
+    prod: "${self:service}-prod"
+  prune:
+    automatic: true
+    number: 1
+
+functions:
+  page-to-pdf:
+    memoriSize: 1536
+    handler: src/page-to-pdf.js
+    events:
+      - http:
+          cors: true
+          method: POST
+          path: /pdf
+    layers:
+      - { Ref: ChromeLambdaLayer }
+
+layers:
+  chrome:
+    path: layer
