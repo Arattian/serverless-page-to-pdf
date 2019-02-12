@@ -19,8 +19,13 @@ provider:
 plugins:
   - serverless-prune-plugin
   - serverless-plugin-tracing
+  - serverless-apigw-binary
+  - serverless-apigwy-binary
   - serverless-offline
 custom:
+  apigwBinary:
+    types:
+      - "*/*"
   defaults:
     stage: local
   profiles:
@@ -41,6 +46,7 @@ functions:
           cors: true
           method: POST
           path: /pdf
+          contentHandling: CONVERT_TO_BINARY
     layers:
       - { Ref: ChromeLambdaLayer }
 

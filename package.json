@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "src/page-to-pdf.js",
   "dependencies": {
-    "puppeteer": "1.11.0"
+    "axios": "^0.18.0",
+    "puppeteer": "1.11.0",
+    "serverless-apigw-binary": "^0.4.4",
+    "serverless-apigwy-binary": "^1.0.0"
   },
   "devDependencies": {
     "serverless": "^1.37.1",

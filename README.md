@@ -24,6 +24,7 @@ Request will have JSON body like this.
 ```javascript
 {
 	"url": "https://google.com", /* required */
+	"s3Url": "value", /* optional (S3 bucket url to upload pdf. If not provided, it will return generated pdf) */
 	"basicAuth": { /* optional (if url contain basic authentication, puppeteer will try to authenticate) */
 		"username": "your username",
 		"password": "your password",
@@ -36,7 +37,8 @@ Request will have JSON body like this.
 		"format": "A4", /* default */
 		"printBackground": true /* default */
 	},
-	"waitUntil": "value" /* optional (supported values "load","domcontentloaded",("networkidle0" - default),"networkidle2" */
+	"waitUntil": "value", /* optional (supported values "load","domcontentloaded",("networkidle0" - default),"networkidle2" */
+	"selector": "value" /* optional (css selector to wait) */
 }
 ```
 
