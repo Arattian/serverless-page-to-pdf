@@ -36,7 +36,6 @@ module.exports.js = async evt => {
     selector,
     s3Url,
   } = body;
-  console.log(body);
   if (!isUrl(url)) {
     return {
       statusCode: 400,
