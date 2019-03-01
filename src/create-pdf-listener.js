@@ -1,31 +1,9 @@
 'use strict';
 const puppeteer = require('puppeteer');
 const axios = require('axios');
-const isUrl = require('./is-url');
 
 module.exports.js = async evt => {
-  let body;
-
-  try {
-    body = evt.isBase64Encoded
-      ? JSON.parse(Buffer.from(evt.body, 'base64').toString())
-      : JSON.parse(evt.body);
-  } catch (error) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: error.message,
-        body: evt.body,
-      }),
-    };
-  }
-
-  if (!body) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'Request must contain non-empty body.' }),
-    };
-  }
+  const snsMessage = JSON.parse(evt.Records[0].Sns.Message);
 
   const {
     url,
@@ -35,20 +13,8 @@ module.exports.js = async evt => {
     waitUntil,
     selector,
     s3Url,
-  } = body;
-  if (!isUrl(url)) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'Request body must contain valid url.' }),
-    };
-  } else if (s3Url && !isUrl(s3Url)) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: 'Request body must contain valid s3 url.',
-      }),
-    };
-  }
+  } = snsMessage;
+
   let browser;
   try {
     browser = await puppeteer.launch({
@@ -57,10 +23,7 @@ module.exports.js = async evt => {
       headless: true,
     });
   } catch (e) {
-    return {
-      statusCode: 500,
-      message: e.message,
-    }
+    throw new Error(e);
   }
 
   const page = await browser.newPage();
@@ -100,7 +63,7 @@ module.exports.js = async evt => {
     };
   }
 
-  const s3Response = await axios.put(url, buffer.toString('base64'), {
+  const s3Response = await axios.put(s3Url, buffer.toString('base64'), {
     headers: {
       'Content-Type': 'application/pdf',
     },
