@@ -16,7 +16,7 @@
   },
   "scripts": {
     "deploy": "serverless deploy",
-    "start": "node --inspect ./node_modules/.bin/serverless offline start -s local --port 3521"
+    "start": "node ./node_modules/.bin/serverless offline start -s local --port 3522"
   },
   "license": "MIT"
 }

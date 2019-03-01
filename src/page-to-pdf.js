@@ -49,11 +49,19 @@ module.exports.js = async evt => {
       }),
     };
   }
-  const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--disable-gpu', '--single-process'],
-    executablePath: '/opt/headless_shell',
-    headless: true,
-  });
+  let browser;
+  try {
+    browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-gpu', '--single-process'],
+      executablePath: '/opt/headless_shell',
+      headless: true,
+    });
+  } catch (e) {
+    return {
+      statusCode: 500,
+      message: e.message,
+    }
+  }
 
   const page = await browser.newPage();
 
