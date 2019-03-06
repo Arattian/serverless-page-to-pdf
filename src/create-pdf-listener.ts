@@ -1,9 +1,10 @@
-'use strict';
-const puppeteer = require('puppeteer-core');
-const axios = require('axios');
+import { Handler, SNSEvent } from 'aws-lambda';
+import axios from 'axios';
+import puppeteer from 'puppeteer-core';
+import { ICreatePdfOptions } from '../types/create.pdf';
 
-module.exports.js = async evt => {
-  const snsMessage = JSON.parse(evt.Records[0].Sns.Message);
+export const ts: Handler = async (evt: SNSEvent) => {
+  const snsMessage: ICreatePdfOptions = JSON.parse(evt.Records[0].Sns.Message);
 
   const {
     url,
@@ -28,37 +29,37 @@ module.exports.js = async evt => {
 
   const page = await browser.newPage();
 
-  headers && (await page.setExtraHTTPHeaders(headers));
+  if (headers) {
+    await page.setExtraHTTPHeaders(headers);
+  }
 
-  basicAuth &&
-    (await page.authenticate({
-      username: basicAuth.username,
+  if (basicAuth) {
+    await page.authenticate({
       password: basicAuth.password,
-    }));
+      username: basicAuth.username,
+    });
+  }
 
   await page.goto(url, {
     waitUntil: waitUntil || 'networkidle0',
   });
 
-  selector && (await page.waitForSelector(selector));
+  if (selector) {
+    await page.waitForSelector(selector);
+  }
 
-  const buffer = await page.pdf(
-    Object.assign(
-      {},
-      {
-        format: 'A4',
-        printBackground: true,
-      },
-      pdfOptions,
-    ),
-  );
+  const buffer = await page.pdf({
+    format: 'A4',
+    printBackground: true,
+    ...pdfOptions,
+  });
   await browser.close();
 
-  if (!s3Url) {
+  if (s3Url == null) {
     return {
       body: buffer.toString('base64'),
-      isBase64Encoded: true,
       headers: { 'Content-type': 'application/pdf' },
+      isBase64Encoded: true,
       statusCode: 200,
     };
   }
@@ -70,7 +71,7 @@ module.exports.js = async evt => {
   });
 
   return {
-    statusCode: s3Response.status,
     body: JSON.stringify(s3Response.data),
+    statusCode: s3Response.status,
   };
 };

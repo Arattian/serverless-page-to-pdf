@@ -57,7 +57,7 @@ custom:
 functions:
   create-pdf:
     memoriSize: 1536
-    handler: src/create-pdf.js
+    handler: src/create-pdf.ts
     events:
       - http:
           cors: true
@@ -69,7 +69,7 @@ functions:
 
   # Event listeners
   create-pdf-listener:
-    handler: src/create-pdf-listener.js
+    handler: src/create-pdf-listener.ts
     timeout: 900
     memorySize: 2048
     events:
