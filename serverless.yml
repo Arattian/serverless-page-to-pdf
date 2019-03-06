@@ -27,6 +27,7 @@ plugins:
   - serverless-apigwy-binary
   - serverless-offline-sns
   - serverless-offline
+  - serverless-webpack
 custom:
   apigwBinary:
     types:
@@ -48,6 +49,11 @@ custom:
     port: "${self:custom.defaults.ports.sns}"
     sns-endpoint: >-
       http://${self:custom.serverless-offline-sns.host}:${self:custom.serverless-offline-sns.port}
+  webpack:
+    includeModules:
+      forceExclude:
+        - aws-sdk
+        - aws-lambda
 functions:
   create-pdf:
     memoriSize: 1536

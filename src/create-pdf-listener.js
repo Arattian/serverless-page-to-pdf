@@ -1,5 +1,5 @@
 'use strict';
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 const axios = require('axios');
 
 module.exports.js = async evt => {

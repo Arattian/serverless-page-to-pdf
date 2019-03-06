@@ -4,10 +4,8 @@ Highly customizable, ready to deploy serverless AWS API to extract pdf of webpag
 
 ## Installation
 
-It is very important to tell NPM to skip installing chromium from `puppeteer` package. To do so, installing dependencies should be done using this command:
-
 ```sh
-PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 npm install
+npm i
 ```
 
 Serverless API Deployment. Make sure before deployment you set your credentials in profile
