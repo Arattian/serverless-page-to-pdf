@@ -62,7 +62,6 @@ jobs:
           name: Clean up
           command: |
             rm -rf ~/.aws/credentials
-            rm .env.$(echo ${CIRCLE_BRANCH})
 
 workflows:
   version: 2
