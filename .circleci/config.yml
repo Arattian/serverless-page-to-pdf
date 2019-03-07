@@ -1,0 +1,91 @@
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:8
+
+version: 2
+jobs:
+  build:
+    <<: *defaults
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run:
+          name: Installing node modules
+          command: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
+
+      - persist_to_workspace:
+          root: "~"
+          paths:
+            - repo
+
+  deploy:
+    <<: *defaults
+
+    steps:
+      - attach_workspace:
+          at: "~"
+
+      - run:
+          name: Installing serverless globally
+          command: sudo npm i -g serverless
+
+      - run:
+          name: Give system a moment
+          command: sleep 1
+
+      - run:
+          name: AWS Credentials
+          command: |
+            touch ~/.aws/credentials
+            echo "[${SERVERLESS_SERVICE}-${CIRCLE_BRANCH}]" >> ~/.aws/credentials
+            echo "aws_access_key_id=$(printenv $(echo AWS_ACCESS_KEY_ID_$(echo ${CIRCLE_BRANCH^^})))" >> ~/.aws/credentials
+            echo -n "aws_secret_access_key=$(printenv $(echo AWS_SECRET_ACCESS_KEY_$(echo ${CIRCLE_BRANCH^^})))" >> ~/.aws/credentials
+      - deploy:
+          name: Deploying
+          command: serverless deploy -s ${CIRCLE_BRANCH}
+
+      - run: rm -rf ~/.aws/credentials
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore:
+                - prod
+      - deploy:
+          filters:
+            branches:
+              only:
+                - dev
+                - staging
+          requires:
+            - build
+  build_and_deploy_prod:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - prod
+      - deploy:
+          filters:
+            branches:
+              only:
+                - build
