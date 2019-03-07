@@ -90,4 +90,6 @@ workflows:
           filters:
             branches:
               only:
-                - build
+                - prod
+          requires:
+            - build
