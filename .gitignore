@@ -3,5 +3,6 @@ node_modules
 
 # Serverless directories
 .serverless
-
+.webpack
+.sonarlint
 .DS_store
