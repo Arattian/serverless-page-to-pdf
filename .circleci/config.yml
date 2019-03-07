@@ -47,18 +47,9 @@ jobs:
           name: Give system a moment
           command: sleep 1
 
-      - run:
-          name: AWS Credentials
-          command: |
-            touch ~/.aws/credentials
-            echo "[${SERVERLESS_SERVICE}-${CIRCLE_BRANCH}]" >> ~/.aws/credentials
-            echo "aws_access_key_id=$(printenv $(echo AWS_ACCESS_KEY_ID_$(echo ${CIRCLE_BRANCH^^})))" >> ~/.aws/credentials
-            echo -n "aws_secret_access_key=$(printenv $(echo AWS_SECRET_ACCESS_KEY_$(echo ${CIRCLE_BRANCH^^})))" >> ~/.aws/credentials
       - deploy:
           name: Deploying
           command: serverless deploy -s ${CIRCLE_BRANCH}
-
-      - run: rm -rf ~/.aws/credentials
 
 workflows:
   version: 2
