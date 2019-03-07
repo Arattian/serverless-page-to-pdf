@@ -47,6 +47,11 @@ jobs:
           name: Give system a moment
           command: sleep 1
 
+      - run:
+          name: AWS Credentials
+          command: |
+            mkdir ~/.aws
+            echo -e "[${SERVERLESS_SERVICE}-${CIRCLE_BRANCH}]\naws_access_key_id=$AWS_ACCESS_KEY_ID_${CIRCLE_BRANCH}\naws_secret_access_key=$AWS_SECRET_ACCESS_KEY_{CIRCLE_BRANCH}\n" > ~/.aws/credentials
       - deploy:
           name: Deploying
           command: serverless deploy -s ${CIRCLE_BRANCH}
