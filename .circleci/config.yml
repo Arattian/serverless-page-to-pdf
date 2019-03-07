@@ -51,10 +51,18 @@ jobs:
           name: AWS Credentials
           command: |
             mkdir ~/.aws
-            echo -e "[${SERVERLESS_SERVICE}-${CIRCLE_BRANCH}]\naws_access_key_id=$AWS_ACCESS_KEY_ID_${CIRCLE_BRANCH}\naws_secret_access_key=$AWS_SECRET_ACCESS_KEY_{CIRCLE_BRANCH}\n" > ~/.aws/credentials
+            touch ~/.aws/credentials
+            echo "[default]" >> ~/.aws/credentials
+            echo "aws_access_key_id=$(printenv $(echo AWS_ACCESS_KEY_ID_$(echo ${CIRCLE_BRANCH})))" >> ~/.aws/credentials
+            echo -n "aws_secret_access_key=$(printenv $(echo AWS_SECRET_ACCESS_KEY_$(echo ${CIRCLE_BRANCH})))" >> ~/.aws/credentials
       - deploy:
           name: Deploying
           command: serverless deploy -s ${CIRCLE_BRANCH}
+      - run:
+          name: Clean up
+          command: |
+            rm -rf ~/.aws/credentials
+            rm .env.$(echo ${CIRCLE_BRANCH})
 
 workflows:
   version: 2
