@@ -6,7 +6,7 @@ provider:
   region: >-
     ${opt:region, self:provider.environment.DEFAULT_REGION}
   stage: "${opt:stage, self:custom.defaults.stage}"
-  profile: "${self:custom.profiles.${self:provider.stage}}"
+  profile: default
   timeout: 30
   tracing: true
   environment:
@@ -36,11 +36,6 @@ custom:
     stage: local
     ports:
       sns: "4480"
-  profiles:
-    local: "${self:service}-local"
-    dev: "${self:service}-dev"
-    staging: "${self:service}-staging"
-    prod: "${self:service}-prod"
   prune:
     automatic: true
     number: 1
