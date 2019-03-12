@@ -68,7 +68,7 @@ functions:
       - http:
           cors: true
           method: POST
-          path: /pdf
+          path: /create-pdf
           contentHandling: CONVERT_TO_BINARY
     layers:
       - { Ref: ChromeLambdaLayer }
