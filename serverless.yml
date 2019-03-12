@@ -1,4 +1,4 @@
-service: serverless-create-pdf
+service: myia-serverless-pdf-creator-api
 
 provider:
   name: aws
@@ -35,8 +35,8 @@ custom:
   defaults:
     stage: local
     ports:
-      sls: "4537"
-      sns: "4480"
+      sls: "6567"
+      sns: "6575"
   profiles:
     local: "${self:service}-local"
     dev: "${self:service}-dev"
@@ -77,9 +77,9 @@ functions:
   create-pdf-listener:
     handler: src/create-pdf-listener.ts
     timeout: 900
-    memorySize: 2048
+    memorySize: 3008
     events:
-      - sns: "CreatePDF"
+      - sns: "${self:provider.stage}CreatePDF"
 
 layers:
   chrome:

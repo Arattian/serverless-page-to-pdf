@@ -52,12 +52,12 @@ jobs:
           command: |
             mkdir ~/.aws
             touch ~/.aws/credentials
-            echo "[default]" >> ~/.aws/credentials
+            echo "[${SERVERLESS_SERVICE}-${CIRCLE_BRANCH}]" >> ~/.aws/credentials
             echo "aws_access_key_id=$(printenv $(echo AWS_ACCESS_KEY_ID_$(echo ${CIRCLE_BRANCH^^})))" >> ~/.aws/credentials
             echo -n "aws_secret_access_key=$(printenv $(echo AWS_SECRET_ACCESS_KEY_$(echo ${CIRCLE_BRANCH^^})))" >> ~/.aws/credentials
       - deploy:
           name: Deploying
-          command: serverless deploy -s ${CIRCLE_BRANCH}
+          command: serverless deploy -s ${CIRCLE_BRANCH} -r $(printenv $(echo SLS_REGION_$(echo ${CIRCLE_BRANCH^^})))
       - run:
           name: Clean up
           command: |

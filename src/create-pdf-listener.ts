@@ -16,35 +16,32 @@ export const ts: Handler = async (evt: SNSEvent) => {
     s3Url,
   } = snsMessage;
 
-  let browser;
-  try {
-    browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-gpu', '--single-process'],
-      executablePath: '/opt/headless_shell',
-      headless: true,
-    });
-  } catch (e) {
-    throw new Error(e);
+  if (s3Url == null) {
+    throw new Error('S3 URL is missing');
   }
+
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-gpu', '--single-process'],
+    executablePath: '/opt/headless_shell',
+    headless: true,
+  });
 
   const page = await browser.newPage();
 
-  if (headers) {
+  if (headers != null) {
     await page.setExtraHTTPHeaders(headers);
   }
 
-  if (basicAuth) {
+  if (basicAuth != null) {
     await page.authenticate({
       password: basicAuth.password,
       username: basicAuth.username,
     });
   }
 
-  await page.goto(url, {
-    waitUntil: waitUntil || 'networkidle0',
-  });
+  await page.goto(url, { waitUntil: waitUntil || 'networkidle0' });
 
-  if (selector) {
+  if (selector != null) {
     await page.waitForSelector(selector);
   }
 
@@ -53,25 +50,12 @@ export const ts: Handler = async (evt: SNSEvent) => {
     printBackground: true,
     ...pdfOptions,
   });
+
   await browser.close();
 
-  if (s3Url == null) {
-    return {
-      body: buffer.toString('base64'),
-      headers: { 'Content-type': 'application/pdf' },
-      isBase64Encoded: true,
-      statusCode: 200,
-    };
-  }
-
-  const s3Response = await axios.put(s3Url, buffer.toString('base64'), {
+  return axios.put(s3Url, buffer.toString('base64'), {
     headers: {
       'Content-Type': 'application/pdf',
     },
   });
-
-  return {
-    body: JSON.stringify(s3Response.data),
-    statusCode: s3Response.status,
-  };
 };
