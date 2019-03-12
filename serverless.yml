@@ -35,10 +35,21 @@ custom:
   defaults:
     stage: local
     ports:
+      sls: "4537"
       sns: "4480"
+  profiles:
+    local: "${self:service}-local"
+    dev: "${self:service}-dev"
+    staging: "${self:service}-staging"
+    prod: "${self:service}-prod"
   prune:
     automatic: true
     number: 1
+  serverless-offline:
+    port: "${self:custom.defaults.ports.sls}"
+    prefix: "${self:provider.stage}"
+    region: "${self:provider.region}"
+    stage: "${self:provider.stage}"
   serverless-offline-sns:
     host: '${env:SLS_HOST_IP, "127.0.0.1"}'
     port: "${self:custom.defaults.ports.sns}"
