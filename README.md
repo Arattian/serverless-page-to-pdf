@@ -5,7 +5,7 @@ Highly customizable, ready to deploy serverless AWS API to extract pdf of webpag
 ## Installation
 
 ```sh
-npm i
+npm install
 ```
 
 Serverless API Deployment. Make sure before deployment you set your credentials in profile
