@@ -6,7 +6,7 @@ provider:
   region: >-
     ${opt:region, self:provider.environment.DEFAULT_REGION}
   stage: "${opt:stage, self:custom.defaults.stage}"
-  profile: default
+  profile: "${self:custom.profiles.${self:provider.stage}}"
   timeout: 30
   tracing: true
   environment:
