@@ -60,19 +60,22 @@ export const ts: Handler = async (evt: SNSEvent) => {
 
   const stats = fs.statSync(fileName);
 
-  return fs.createReadStream(fileName).pipe(
-    request(
-      s3Url,
-      {
+  return new Promise((resolve, reject) => {
+    const stream = fs.createReadStream(fileName).pipe(
+      request(s3Url, {
         headers: {
           'Content-Length': stats.size,
           'Content-Type': 'application/pdf',
         },
         method: 'PUT',
-      },
-      () => {
-        fs.unlinkSync(fileName);
-      },
-    ),
-  );
+      }),
+    );
+    stream.on('error', (err: Error) => {
+      return reject(err);
+    });
+    stream.on('finish', () => {
+      fs.unlinkSync(fileName);
+      return resolve();
+    });
+  });
 };
