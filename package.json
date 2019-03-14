@@ -35,7 +35,7 @@
   },
   "scripts": {
     "postinstall": "starve",
-    "start": "export AWS_XRAY_CONTEXT_MISSING=LOG_ERROR && node ./node_modules/.bin/serverless offline start -s local --location .webpack/service",
+    "start": "export AWS_XRAY_CONTEXT_MISSING=LOG_ERROR && node --inspect ./node_modules/.bin/serverless offline start -s local --location .webpack/service",
     "host": "export SLS_HOST_IP=$(ifconfig | grep 'inet ' | grep -Fv 127.0.0.1 | awk '{print $2}') && npm start -- --host $SLS_HOST_IP --dontPrintOutput"
   },
   "license": "MIT"
