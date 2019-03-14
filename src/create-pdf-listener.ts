@@ -1,5 +1,6 @@
 import { Handler, SNSEvent } from 'aws-lambda';
-import axios from 'axios';
+import fs from 'fs';
+import { request } from 'https';
 import puppeteer from 'puppeteer-core';
 import { ICreatePdfOptions } from '../types/create.pdf';
 
@@ -53,9 +54,28 @@ export const ts: Handler = async (evt: SNSEvent) => {
 
   await browser.close();
 
-  return axios.put(s3Url, buffer.toString('base64'), {
-    headers: {
-      'Content-Type': 'application/pdf',
-    },
+  const fileName = `/tmp/${Date.now()}.pdf`;
+
+  fs.writeFileSync(fileName, buffer);
+
+  const stats = fs.statSync(fileName);
+
+  return new Promise((resolve, reject) => {
+    const stream = fs.createReadStream(fileName).pipe(
+      request(s3Url, {
+        headers: {
+          'Content-Length': stats.size,
+          'Content-Type': 'application/pdf',
+        },
+        method: 'PUT',
+      }),
+    );
+    stream.on('error', (err: Error) => {
+      return reject(err);
+    });
+    stream.on('finish', () => {
+      fs.unlinkSync(fileName);
+      return resolve();
+    });
   });
 };
