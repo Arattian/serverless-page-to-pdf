@@ -76,7 +76,7 @@ export const ts: Handler = async (evt: SNSEvent) => {
             return reject(err);
           }
           fs.unlinkSync(fileName);
-          resolve();
+          return resolve();
         },
       ),
     );
