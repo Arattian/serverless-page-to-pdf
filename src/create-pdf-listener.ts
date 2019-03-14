@@ -54,14 +54,14 @@ export const ts: Handler = async (evt: SNSEvent) => {
 
   await browser.close();
 
-  const fileName = `/tmp/${Date.now()}.pdf`;
+  const filePath = `/tmp/${Date.now()}.pdf`;
 
-  fs.writeFileSync(fileName, buffer);
+  fs.writeFileSync(filePath, buffer);
 
-  const stats = fs.statSync(fileName);
+  const stats = fs.statSync(filePath);
 
   return new Promise((resolve, reject) => {
-    const stream = fs.createReadStream(fileName).pipe(
+    const stream = fs.createReadStream(filePath).pipe(
       request(s3Url, {
         headers: {
           'Content-Length': stats.size,
@@ -74,7 +74,7 @@ export const ts: Handler = async (evt: SNSEvent) => {
       return reject(err);
     });
     stream.on('finish', () => {
-      fs.unlinkSync(fileName);
+      fs.unlinkSync(filePath);
       return resolve();
     });
   });
