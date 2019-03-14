@@ -1,6 +1,5 @@
 import { Handler, SNSEvent } from 'aws-lambda';
 import fs from 'fs';
-import { IncomingMessage } from 'http';
 import { request } from 'https';
 import puppeteer from 'puppeteer-core';
 import { ICreatePdfOptions } from '../types/create.pdf';
