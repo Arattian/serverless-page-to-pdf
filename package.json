@@ -5,6 +5,7 @@
   "dependencies": {
     "aws-sdk": "^2.419.0",
     "puppeteer-core": "1.11.0",
+    "request": "^2.88.0",
     "serverless-apigw-binary": "^0.4.4",
     "serverless-apigwy-binary": "^1.0.0",
     "source-map-support": "^0.5.11"
@@ -13,6 +14,7 @@
     "@types/aws-lambda": "^8.10.22",
     "@types/copy-webpack-plugin": "^4.4.3",
     "@types/puppeteer-core": "^1.9.0",
+    "@types/request": "^2.48.1",
     "@types/source-map-support": "^0.5.0",
     "@types/webpack-node-externals": "^1.6.3",
     "aws-lambda": "^0.1.2",
@@ -33,7 +35,7 @@
   },
   "scripts": {
     "postinstall": "starve",
-    "start": "export AWS_XRAY_CONTEXT_MISSING=LOG_ERROR && node --inspect ./node_modules/.bin/serverless offline start -s local --location .webpack/service",
+    "start": "export AWS_XRAY_CONTEXT_MISSING=LOG_ERROR && node ./node_modules/.bin/serverless offline start -s local --location .webpack/service",
     "host": "export SLS_HOST_IP=$(ifconfig | grep 'inet ' | grep -Fv 127.0.0.1 | awk '{print $2}') && npm start -- --host $SLS_HOST_IP --dontPrintOutput"
   },
   "license": "MIT"

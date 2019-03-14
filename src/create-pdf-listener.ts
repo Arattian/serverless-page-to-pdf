@@ -1,7 +1,7 @@
 import { Handler, SNSEvent } from 'aws-lambda';
 import fs from 'fs';
-import { request } from 'https';
 import puppeteer from 'puppeteer-core';
+import request from 'request';
 import { ICreatePdfOptions } from '../types/create.pdf';
 
 export const ts: Handler = async (evt: SNSEvent) => {
@@ -61,21 +61,24 @@ export const ts: Handler = async (evt: SNSEvent) => {
   const stats = fs.statSync(filePath);
 
   return new Promise((resolve, reject) => {
-    const stream = fs.createReadStream(filePath).pipe(
-      request(s3Url, {
-        headers: {
-          'Content-Length': stats.size,
-          'Content-Type': 'application/pdf',
+    fs.createReadStream(filePath).pipe(
+      request(
+        {
+          headers: {
+            'Content-Length': stats.size,
+            'Content-Type': 'application/pdf',
+          },
+          method: 'PUT',
+          url: s3Url,
         },
-        method: 'PUT',
-      }),
+        (err: Error, res) => {
+          if (err) {
+            return reject(err);
+          }
+          fs.unlinkSync(filePath);
+          return resolve(res);
+        },
+      ),
     );
-    stream.on('error', (err: Error) => {
-      return reject(err);
-    });
-    stream.on('finish', () => {
-      fs.unlinkSync(filePath);
-      return resolve();
-    });
   });
 };
