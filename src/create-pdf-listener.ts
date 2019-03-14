@@ -54,7 +54,7 @@ export const ts: Handler = async (evt: SNSEvent) => {
 
   await browser.close();
 
-  const fileName = `${Date.now()}.pdf`;
+  const fileName = `/tmp/${Date.now()}.pdf`;
 
   fs.writeFileSync(fileName, buffer);
 
