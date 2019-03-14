@@ -61,5 +61,12 @@ export const ts: Handler = async (evt: APIGatewayEvent, ctx: Context) => {
     throw new Error('Request body must contain valid s3 url');
   }
 
-  return broadcast('CreatePDF', JSON.stringify(body), ctx);
+  await broadcast('CreatePDF', JSON.stringify(body), ctx);
+  return {
+    statusCode: 200,
+
+    body: JSON.stringify({
+      message: 'Creating PDF',
+    }),
+  };
 };

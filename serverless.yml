@@ -62,16 +62,13 @@ custom:
         - aws-lambda
 functions:
   create-pdf:
-    memoriSize: 1536
+    memorySize: 128
     handler: src/create-pdf.ts
     events:
       - http:
           cors: true
           method: POST
           path: /create-pdf
-          contentHandling: CONVERT_TO_BINARY
-    layers:
-      - { Ref: ChromeLambdaLayer }
 
   # Event listeners
   create-pdf-listener:
@@ -80,6 +77,8 @@ functions:
     memorySize: 3008
     events:
       - sns: "${self:provider.stage}CreatePDF"
+    layers:
+      - { Ref: ChromeLambdaLayer }
 
 layers:
   chrome:
