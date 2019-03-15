@@ -41,7 +41,7 @@ jobs:
 
       - run:
           name: Installing serverless globally
-          command: sudo npm i -g serverless
+          command: sudo npm i -g serverless@1.38.0
 
       - run:
           name: Give system a moment
