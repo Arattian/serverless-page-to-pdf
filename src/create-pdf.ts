@@ -44,24 +44,51 @@ export const ts: Handler = async (evt: APIGatewayEvent, ctx: Context) => {
   let body;
 
   if (evt.body == null) {
-    throw new Error('Missing request body');
+    return {
+      statusCode: 503,
+
+      body: JSON.stringify({
+        message: 'Missing request body',
+      }),
+    };
   }
 
-  body = evt.isBase64Encoded
-    ? JSON.parse(Buffer.from(evt.body, 'base64').toString())
-    : JSON.parse(evt.body);
+  try {
+    body = evt.isBase64Encoded
+      ? JSON.parse(Buffer.from(evt.body, 'base64').toString())
+      : JSON.parse(evt.body);
+  } catch (error) {
+    return {
+      statusCode: 503,
+
+      body: JSON.stringify(error),
+    };
+  }
 
   const { url, s3Url } = body;
 
   if (!isUrl(url)) {
-    throw new Error('Request body must contain valid url');
+    return {
+      statusCode: 503,
+
+      body: JSON.stringify({
+        message: 'Request body must contain valid url',
+      }),
+    };
   }
 
   if (!isUrl(s3Url)) {
-    throw new Error('Request body must contain valid s3 url');
+    return {
+      statusCode: 503,
+
+      body: JSON.stringify({
+        message: 'Request body must contain valid s3 url',
+      }),
+    };
   }
 
   await broadcast('CreatePDF', JSON.stringify(body), ctx);
+
   return {
     statusCode: 200,
 
