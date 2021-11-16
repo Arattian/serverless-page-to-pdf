@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/create-pdf.js",
   "dependencies": {
-    "aws-sdk": "^2.470.0",
+    "aws-sdk": "^2.814.0",
     "puppeteer-core": "1.11.0",
     "request": "^2.88.0",
     "serverless-apigw-binary": "^0.4.4",
