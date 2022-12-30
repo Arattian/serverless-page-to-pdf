@@ -20,7 +20,7 @@
     "aws-lambda": "^0.1.2",
     "copy-webpack-plugin": "^5.0.3",
     "eslint": "^5.16.0",
-    "serverless": "^1.44.1",
+    "serverless": "^1.83.3",
     "serverless-offline": "^5.0.1",
     "serverless-offline-sns": "0.53.0",
     "serverless-plugin-tracing": "^2.0.0",
